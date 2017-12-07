@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+            <meta charset="utf-8">
+            <style>
+            .target{
+                height: 200px;
+                margin-top: 200px;
+                background-color: #ccc;
+                opacity: 0;
+                transform: translateY(10px);
+                transition: .5s;
+            }
+            .target[data-inview = "true"]{
+                opacity: 1;
+                transform: translateY(0);
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="box">
+            <div class="target">target 1</div>
+            <div class="target">target 2</div>
+            <div class="target" data-inview-offset="300">target 3 offset 200</div>
+            <div class="target">target 4</div>
+            <div class="target" data-inview-offset="500">
+                target 5<br>
+                極端なoffset指定で画面に入ってこないエレメントも、<br>
+                ドキュメント最下部まで到達すると強制的に表示状態になる。
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
+        <script src="bundle.js?4"></script>
+    </body>
+</html>
+
+
+
