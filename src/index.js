@@ -74,8 +74,7 @@ export default class {
     }
 
     /**
-     * ターゲットエレメントを取得
-     * エレメント、top座標、bottom座標を格納したクラスの配列を作る
+     * エレメント、top座標、bottom座標を格納したクラスの配列を作り直す
      * @public
      */
     reset_target() {

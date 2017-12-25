@@ -37,7 +37,7 @@ Configure = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-    // Configure.plugins.push(uglify());
+    Configure.plugins.push(uglify());
 } else {
     Configure.targets.push({
         dest: `${paths.dist.root}${fileName}.es.js`,
