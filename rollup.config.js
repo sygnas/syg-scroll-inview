@@ -18,7 +18,7 @@ const paths = {
 let fileName,
     Configure;
 
-fileName = process.env.NODE_ENV !== 'production' ? 'syg-scroll-inview' : 'syg-scroll-inview.min';
+fileName = process.env.NODE_ENV !== 'production' ? 'scroll-inview' : 'scroll-inview.min';
 
 Configure = {
     entry: `${paths.source.root}index.js`,
@@ -33,6 +33,9 @@ Configure = {
         babel(),
         sourcemaps(),
         resolve(),
+    ],
+    external: [
+        '@sygnas/throttle',
     ],
 };
 

@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,12 +72,11 @@
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dist_syg_scroll_inview_es__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dist_scroll_inview_es__ = __webpack_require__(1);
 
 
-// import InView from '../../src/index';
 
-var inview = new __WEBPACK_IMPORTED_MODULE_0__dist_syg_scroll_inview_es__["a" /* default */]('.target');
+var inview = new __WEBPACK_IMPORTED_MODULE_0__dist_scroll_inview_es__["a" /* default */]('.target');
 
 inview.start();
 
@@ -86,18 +85,8 @@ inview.start();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var index = function index(timing, func, scope) {
-    var id = null;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sygnas_throttle__ = __webpack_require__(2);
 
-    return function () {
-        if (id !== null) return;
-        func.apply(scope);
-
-        id = setTimeout(function () {
-            id = null;
-        }, timing);
-    };
-};
 
 var classCallCheck = function classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -197,8 +186,7 @@ var _class = function () {
     }
 
     /**
-     * ターゲットエレメントを取得
-     * エレメント、top座標、bottom座標を格納したクラスの配列を作る
+     * エレメント、top座標、bottom座標を格納したクラスの配列を作り直す
      * @public
      */
 
@@ -236,12 +224,12 @@ var _class = function () {
             this.$_check_element_position();
 
             // ウィンドウ、ドキュメントの高さをチェック
-            this.ev_resize = index(50, this.$_check_document_height, this);
+            this.ev_resize = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__sygnas_throttle__["a" /* default */])(50, this.$_check_document_height, this);
             window.addEventListener('resize', this.ev_resize);
             this.$_check_document_height();
 
             // スクロールイベント
-            this.ev_scroll = index(40, this.$_check_inview, this);
+            this.ev_scroll = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__sygnas_throttle__["a" /* default */])(40, this.$_check_inview, this);
             window.addEventListener('scroll', this.ev_scroll);
             this.$_check_inview();
 
@@ -389,10 +377,31 @@ function get_node_array(node_list) {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (_class);
-//# sourceMappingURL=syg-scroll-inview.es.js.map
+//# sourceMappingURL=scroll-inview.es.js.map
 
 /***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var index = function index(timing, func, scope) {
+    var id = null;
+
+    return function () {
+        if (id !== null) return;
+        func.apply(scope);
+
+        id = setTimeout(function () {
+            id = null;
+        }, timing);
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (index);
+//# sourceMappingURL=throttle.es.js.map
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(0);

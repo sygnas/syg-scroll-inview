@@ -1,21 +1,10 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global['syg-scroll-inview'] = factory());
-}(this, (function () { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@sygnas/throttle')) :
+	typeof define === 'function' && define.amd ? define(['@sygnas/throttle'], factory) :
+	(global['syg-scroll-inview'] = factory(global.throttle));
+}(this, (function (throttle) { 'use strict';
 
-var index = function index(timing, func, scope) {
-    var id = null;
-
-    return function () {
-        if (id !== null) return;
-        func.apply(scope);
-
-        id = setTimeout(function () {
-            id = null;
-        }, timing);
-    };
-};
+throttle = throttle && throttle.hasOwnProperty('default') ? throttle['default'] : throttle;
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -117,8 +106,7 @@ var _class = function () {
     }
 
     /**
-     * ターゲットエレメントを取得
-     * エレメント、top座標、bottom座標を格納したクラスの配列を作る
+     * エレメント、top座標、bottom座標を格納したクラスの配列を作り直す
      * @public
      */
 
@@ -157,12 +145,12 @@ var _class = function () {
             this.$_check_element_position();
 
             // ウィンドウ、ドキュメントの高さをチェック
-            this.ev_resize = index(50, this.$_check_document_height, this);
+            this.ev_resize = throttle(50, this.$_check_document_height, this);
             window.addEventListener('resize', this.ev_resize);
             this.$_check_document_height();
 
             // スクロールイベント
-            this.ev_scroll = index(40, this.$_check_inview, this);
+            this.ev_scroll = throttle(40, this.$_check_inview, this);
             window.addEventListener('scroll', this.ev_scroll);
             this.$_check_inview();
 
@@ -312,4 +300,4 @@ function get_node_array(node_list) {
 return _class;
 
 })));
-//# sourceMappingURL=syg-scroll-inview.js.map
+//# sourceMappingURL=scroll-inview.js.map

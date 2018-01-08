@@ -12,7 +12,7 @@ Scroll in viewport add data attribute.
 ### Install
 
 ```sh
-npm install syg-scroll-inview
+npm install --save @sygnas/scroll-inview
 ```
 ### html / JS / css
 
@@ -22,7 +22,7 @@ npm install syg-scroll-inview
 ```
 
 ```JavaScript
-import ScrollInView from 'syg-scroll-inview';
+import ScrollInView from '@sygnas/scroll-inview';
 
 const in_view = new ScrollInView($('.js-inview'), {
     // Options

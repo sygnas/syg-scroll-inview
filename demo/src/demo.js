@@ -1,6 +1,5 @@
 
-import InView from '../../dist/syg-scroll-inview.es';
-// import InView from '../../src/index';
+import InView from '../../dist/scroll-inview.es';
 
 const inview = new InView('.target');
 

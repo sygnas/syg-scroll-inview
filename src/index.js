@@ -6,7 +6,7 @@
  * @license  MIT
  */
 
-import throttle from 'syg-throttle';
+import throttle from '@sygnas/throttle';
 
 
 // デフォルト値
