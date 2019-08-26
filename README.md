@@ -7,6 +7,11 @@ Scroll in viewport add data attribute.
 
 画面に入ったらエフェクトを加えたいけど、余計な機能は不要、cssは自分で書く、という人向け。
 
+## Release
+
+- 2019.8.27
+  - intersectionObserver に対応。
+
 ## Usage
 
 ### Install
