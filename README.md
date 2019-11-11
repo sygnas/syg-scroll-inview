@@ -9,6 +9,9 @@ Scroll in viewport add data attribute.
 
 ## Release
 
+- 2019.11.11
+  - オプションを intersectionObserver に合わせた方式に変更。
+  - 上記にあわせ`offset`値はマイナスをデフォルトに変更。
 - 2019.8.27
   - intersectionObserver に対応。
 
@@ -75,9 +78,9 @@ const in_view = new ScrollInView({options});
 
 | option | default | comment |
 | ---- | ---- | ---- |
-| offset | 50 | data属性「data-inview-offset」と同じだが、data属性のほうが優先される |
-| doc_bottom_offset | 50 | ドキュメント最下部のスクロール座標オフセット |
-| on_view | function(elm){} | ビューポートに入ると実行される |
+| doc_bottom_offset | 50 | `addEventListener('scroll')`方式のみ使用。ドキュメント最下部のスクロール座標オフセット |
+| offset | -50 | data属性「data-inview-offset」と同じだが、data属性のほうが優先される |
+| threshold | 0 | `IntersectionObserver()`のみ使用。対象エレメントの何割が画面に入ったら表示したと判定するか |
 
 ### start()
 
@@ -90,6 +93,7 @@ in_view.start();
 ### stop()
 
 スクロールの監視を停止する。
+※intersectionObserver方式の時は無効。
 
 ```javascript
 in_view.stop();

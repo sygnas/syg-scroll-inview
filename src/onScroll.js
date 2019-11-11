@@ -9,9 +9,8 @@ import throttle from '@sygnas/throttle';
 
 // デフォルト値
 const defaults = {
-    offset: 50,
+    offset: -50,
     doc_bottom_offset: 50,
-    on_view: function() {}
 };
 
 const ATTR_INVIEW = 'data-inview';
@@ -85,6 +84,7 @@ export default class {
             const target = new TargetClass(elm);
             const offset = Number.parseInt(elm.getAttribute(ATTR_INVIEW_OFFSET), 10);
             target.offset =  offset || opt.offset;
+            target.offset *= -1;
             this.target_list.push(target);
         });
     }

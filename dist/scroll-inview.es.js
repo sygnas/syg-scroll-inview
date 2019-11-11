@@ -1155,9 +1155,8 @@ var _Object$assign = unwrapExports(assign$2);
 
 // デフォルト値
 var defaults = {
-    offset: 50,
-    doc_bottom_offset: 50,
-    on_view: function on_view() {}
+    offset: -50,
+    doc_bottom_offset: 50
 };
 
 var ATTR_INVIEW = 'data-inview';
@@ -1239,6 +1238,7 @@ var _class = function () {
                 var target = new TargetClass(elm);
                 var offset = _Number$parseInt(elm.getAttribute(ATTR_INVIEW_OFFSET), 10);
                 target.offset = offset || opt.offset;
+                target.offset *= -1;
                 _this.target_list.push(target);
             });
         }
@@ -1418,9 +1418,8 @@ function get_node_array(node_list) {
 
 // デフォルト値
 var defaults$1 = {
-  offset: 50,
-  doc_bottom_offset: 50,
-  on_view: function on_view() {}
+  threshold: 0,
+  offset: -50
 };
 
 var ATTR_INVIEW$1 = 'data-inview';
@@ -1455,7 +1454,7 @@ var _class$1 = function () {
 
       var option = {
         rootMargin: offset,
-        threshold: .5
+        threshold: this.opt.threshold
       };
       var observer = new IntersectionObserver(this._observerCallback, option);
 
@@ -1463,6 +1462,14 @@ var _class$1 = function () {
         observer.observe(target);
       });
     }
+    /**
+     * 判定を全て停める
+     * @public
+     */
+
+  }, {
+    key: 'stop',
+    value: function stop() {}
 
     /** *******************************
      * プライベートメソッド

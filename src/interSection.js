@@ -4,9 +4,8 @@
 
 // デフォルト値
 const defaults = {
-  offset: 50,
-  doc_bottom_offset: 50,
-  on_view: function () { }
+  threshold: 0,
+  offset: -50,
 };
 
 const ATTR_INVIEW = 'data-inview';
@@ -35,7 +34,7 @@ export default class {
 
     const option = {
       rootMargin: offset,
-      threshold: .5,
+      threshold: this.opt.threshold,
     };
     const observer = new IntersectionObserver(this._observerCallback, option);
 
@@ -43,6 +42,13 @@ export default class {
       observer.observe(target);
     });
   }
+  /**
+   * 判定を全て停める
+   * @public
+   */
+  stop() {
+  }
+
 
   /** *******************************
    * プライベートメソッド
