@@ -32,14 +32,19 @@ export default class {
   start() {
     const offset = String(this.opt.offset).match(/(%|px)$/) ? this.opt.offset : `${this.opt.offset}px`;
 
-    const option = {
-      rootMargin: offset,
-      threshold: this.opt.threshold,
-    };
-    const observer = new IntersectionObserver(this._observerCallback, option);
+    this.opt.rootMargin = offset;
 
+    // intersectionObserverのインスタンスを格納するオブジェクト
+    const observerList = {};
+
+    // // デフォルトを作成
+    const defaultName = this._getObserverName();
+    const defaultObserver = this._getObserver();
+    observerList[defaultName] = defaultObserver;
+
+    // ターゲットエレメントをオブザーバーに登録
     document.querySelectorAll(this.target_string).forEach(target => {
-      observer.observe(target);
+      this._setTargetObserver(observerList, target);
     });
   }
   /**
@@ -53,6 +58,49 @@ export default class {
   /** *******************************
    * プライベートメソッド
    */
+
+   /**
+    * エレメントをオブザーバーに登録
+    */
+   _setTargetObserver (observerList, target) {
+      // エレメントの data-inview-margin / data-inview-threshold からパラメーターを取得
+      // 該当するデータ属性がなければデフォルト値から
+      const rootMargin = target.dataset['inviewMargin'] || this.opt.rootMargin;
+      const threshold = target.dataset['inviewThreshold'] || this.opt.threshold;
+      const name = this._getObserverName(rootMargin, threshold);
+      let observer;
+
+      // 同じ設定の observer が存在しなければ新たに作成
+      // 存在するならそれを使う
+      if (observerList[name]) {
+        observer = observerList[name];
+      } else {
+        observer = this._getObserver(rootMargin, threshold);
+        observerList[name] = observer;
+      }
+
+      observer.observe(target);
+   }
+
+   /**
+    * obserberList に格納するキー名を取得
+    */
+   _getObserverName (rootMargin = null, threshold = null) {
+      const nameMargin = rootMargin || this.opt.rootMargin;
+      const nameThreshold = threshold || this.opt.threshold;
+      return `${nameMargin}:${nameThreshold}`
+   }
+
+   /**
+    * IntersectionObserverを生成する
+    */
+   _getObserver (rootMargin = null, threshold = null) {
+     const param = {
+       rootMargin: rootMargin || this.opt.rootMargin,
+       threshold: threshold || this.opt.threshold,
+     };
+     return new IntersectionObserver(this._observerCallback, param);
+   }
 
   /**
    * 画面に入ったら ATTR_INVIEW のdata属性に true を入れる。

@@ -49,7 +49,7 @@ if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 });
 
 var _core = createCommonjsModule(function (module) {
-var core = module.exports = { version: '2.5.3' };
+var core = module.exports = { version: '2.6.11' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 
@@ -161,6 +161,11 @@ var _hide = _descriptors ? function (object, key, value) {
   return object;
 };
 
+var hasOwnProperty = {}.hasOwnProperty;
+var _has = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -178,7 +183,7 @@ var $export = function (type, name, source) {
   for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && key in exports) continue;
+    if (own && _has(exports, key)) continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -220,11 +225,6 @@ $export.R = 128; // real proto method for `library`
 var _export = $export;
 
 var _redefine = _hide;
-
-var hasOwnProperty = {}.hasOwnProperty;
-var _has = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
 
 var toString = {}.toString;
 
@@ -284,11 +284,18 @@ var _arrayIncludes = function (IS_INCLUDES) {
   };
 };
 
+var _shared = createCommonjsModule(function (module) {
 var SHARED = '__core-js_shared__';
 var store = _global[SHARED] || (_global[SHARED] = {});
-var _shared = function (key) {
-  return store[key] || (store[key] = {});
-};
+
+(module.exports = function (key, value) {
+  return store[key] || (store[key] = value !== undefined ? value : {});
+})('versions', []).push({
+  version: _core.version,
+  mode: _library ? 'pure' : 'global',
+  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+});
+});
 
 var id = 0;
 var px = Math.random();
@@ -460,7 +467,7 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = (!BUGGY && $native) || getMethod(DEFAULT);
+  var $default = $native || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -471,7 +478,7 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
       // Set @@toStringTag to native iterators
       _setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!_library && !_has(IteratorPrototype, ITERATOR)) _hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -749,6 +756,8 @@ var META = _meta.KEY;
 
 
 
+
+
 var gOPD$1 = _objectGopd.f;
 var dP$1 = _objectDp.f;
 var gOPN$1 = _objectGopnExt.f;
@@ -763,7 +772,7 @@ var SymbolRegistry = _shared('symbol-registry');
 var AllSymbols = _shared('symbols');
 var OPSymbols = _shared('op-symbols');
 var ObjectProto$1 = Object[PROTOTYPE$2];
-var USE_NATIVE = typeof $Symbol == 'function';
+var USE_NATIVE = typeof $Symbol == 'function' && !!_objectGops.f;
 var QObject = _global.QObject;
 // Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
 var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
@@ -922,6 +931,16 @@ _export(_export.S + _export.F * !USE_NATIVE, 'Object', {
   getOwnPropertyNames: $getOwnPropertyNames,
   // 19.1.2.8 Object.getOwnPropertySymbols(O)
   getOwnPropertySymbols: $getOwnPropertySymbols
+});
+
+// Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
+// https://bugs.chromium.org/p/v8/issues/detail?id=3443
+var FAILS_ON_PRIMITIVES = _fails(function () { _objectGops.f(1); });
+
+_export(_export.S + _export.F * FAILS_ON_PRIMITIVES, 'Object', {
+  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
+    return _objectGops.f(_toObject(it));
+  }
 });
 
 // 24.3.2 JSON.stringify(value [, replacer [, space]])
@@ -1092,7 +1111,7 @@ var _parseInt = $parseInt(_stringWs + '08') !== 8 || $parseInt(_stringWs + '0x16
 // 20.1.2.13 Number.parseInt(string, radix)
 _export(_export.S + _export.F * (Number.parseInt != _parseInt), 'Number', { parseInt: _parseInt });
 
-var _parseInt$2 = parseInt;
+var _parseInt$2 = _core.Number.parseInt;
 
 var _parseInt$4 = createCommonjsModule(function (module) {
 module.exports = { "default": _parseInt$2, __esModule: true };
@@ -1101,6 +1120,7 @@ module.exports = { "default": _parseInt$2, __esModule: true };
 var _Number$parseInt = unwrapExports(_parseInt$4);
 
 // 19.1.2.1 Object.assign(target, source, ...)
+
 
 
 
@@ -1130,7 +1150,10 @@ var _objectAssign = !$assign || _fails(function () {
     var length = keys.length;
     var j = 0;
     var key;
-    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
+    while (length > j) {
+      key = keys[j++];
+      if (!_descriptors || isEnum.call(S, key)) T[key] = S[key];
+    }
   } return T;
 } : $assign;
 
@@ -1450,16 +1473,23 @@ var _class$1 = function () {
   _createClass(_class, [{
     key: 'start',
     value: function start() {
+      var _this = this;
+
       var offset = String(this.opt.offset).match(/(%|px)$/) ? this.opt.offset : this.opt.offset + 'px';
 
-      var option = {
-        rootMargin: offset,
-        threshold: this.opt.threshold
-      };
-      var observer = new IntersectionObserver(this._observerCallback, option);
+      this.opt.rootMargin = offset;
 
+      // intersectionObserverのインスタンスを格納するオブジェクト
+      var observerList = {};
+
+      // // デフォルトを作成
+      var defaultName = this._getObserverName();
+      var defaultObserver = this._getObserver();
+      observerList[defaultName] = defaultObserver;
+
+      // ターゲットエレメントをオブザーバーに登録
       document.querySelectorAll(this.target_string).forEach(function (target) {
-        observer.observe(target);
+        _this._setTargetObserver(observerList, target);
       });
     }
     /**
@@ -1474,6 +1504,64 @@ var _class$1 = function () {
     /** *******************************
      * プライベートメソッド
      */
+
+    /**
+     * エレメントをオブザーバーに登録
+     */
+
+  }, {
+    key: '_setTargetObserver',
+    value: function _setTargetObserver(observerList, target) {
+      // エレメントの data-inview-margin / data-inview-threshold からパラメーターを取得
+      // 該当するデータ属性がなければデフォルト値から
+      var rootMargin = target.dataset['inviewMargin'] || this.opt.rootMargin;
+      var threshold = target.dataset['inviewThreshold'] || this.opt.threshold;
+      var name = this._getObserverName(rootMargin, threshold);
+      var observer = void 0;
+
+      // 同じ設定の observer が存在しなければ新たに作成
+      // 存在するならそれを使う
+      if (observerList[name]) {
+        observer = observerList[name];
+      } else {
+        observer = this._getObserver(rootMargin, threshold);
+        observerList[name] = observer;
+      }
+
+      observer.observe(target);
+    }
+
+    /**
+     * obserberList に格納するキー名を取得
+     */
+
+  }, {
+    key: '_getObserverName',
+    value: function _getObserverName() {
+      var rootMargin = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      var nameMargin = rootMargin || this.opt.rootMargin;
+      var nameThreshold = threshold || this.opt.threshold;
+      return nameMargin + ':' + nameThreshold;
+    }
+
+    /**
+     * IntersectionObserverを生成する
+     */
+
+  }, {
+    key: '_getObserver',
+    value: function _getObserver() {
+      var rootMargin = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      var param = {
+        rootMargin: rootMargin || this.opt.rootMargin,
+        threshold: threshold || this.opt.threshold
+      };
+      return new IntersectionObserver(this._observerCallback, param);
+    }
 
     /**
      * 画面に入ったら ATTR_INVIEW のdata属性に true を入れる。

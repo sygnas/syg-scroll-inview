@@ -9,6 +9,8 @@ Scroll in viewport add data attribute.
 
 ## Release
 
+- 2020.05.02
+  - `data-inview-margin`属性、`data-inview-threshold`属性を追加。
 - 2019.11.11
   - オプションを intersectionObserver に合わせた方式に変更。
   - 上記にあわせ`offset`値はマイナスをデフォルトに変更。
@@ -56,13 +58,14 @@ in_view.start();
 ## Attributes
 
 ```Html
-<header class="js-inview" data-inview-offset="50">
+<header class="js-inview" data-inview-margin=".5" data-inview-threshold="-200px">
 ```
 
 | name | default | comment |
 | ---- | ---- | --- |
 | data-inview | false | 自動で付与される。エレメントがビューポートに入ると true になる。 |
-| data-inview-offset | 50 | ビューポートに入る判定のオフセット。<br>プラス値は画面の内側、マイナス値は画面の外側
+| data-inview-margin | 0 | ビューポート内の端から何pxの位置で表示するか（px指定） |
+| data-inview-threshold | 0 | 対象エレメントがビューポートに何割入ったら表示するか。（0〜1） |
 
 ## Methods
 
@@ -79,7 +82,7 @@ const in_view = new ScrollInView({options});
 | option | default | comment |
 | ---- | ---- | ---- |
 | doc_bottom_offset | 50 | `addEventListener('scroll')`方式のみ使用。ドキュメント最下部のスクロール座標オフセット |
-| offset | -50 | data属性「data-inview-offset」と同じだが、data属性のほうが優先される |
+| offset | -50 | data属性「data-inview-margin」と同じだが、data属性のほうが優先される |
 | threshold | 0 | `IntersectionObserver()`のみ使用。対象エレメントの何割が画面に入ったら表示したと判定するか |
 
 ### start()
