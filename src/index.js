@@ -6,55 +6,46 @@
  * @license  MIT
  */
 
-import onScroll from './onScroll';
-import interSection from './interSection';
+const ATTR_INVIEW = 'data-inview';
 
 /**
  * in view controller
  */
 export default class {
 
-    /**
-     * コンストラクタ
-     * @param {string} target DOM selector string
-     * @param {object} config
-     */
-    constructor(target, config) {
-      this.controller = null;
+  /**
+   * コンストラクタ
+   * @param {string} targetString DOM selector string
+   * @param {object} option IntersectionObserver Option
+   */
+  constructor(targetString, option = {}) {
+    this.targetString = targetString;
+    this.observer = new IntersectionObserver(this._observerCallback, option);
+  }
 
-      // IntersectionObserverの対応状況で方法を切り替える
-      if (typeof window !== 'object') {
-        this.controller = new interSection(target, config);
-        return;
-      }
+  /**
+   * スクロール検知処理を開始
+   * @public
+   */
+  start() {
+    document.querySelectorAll(this.targetString).forEach(target => {
+      this.observer.observe(target);
+    });
+  }
 
-      if ('IntersectionObserver' in window &&
-      'IntersectionObserverEntry' in window &&
-      'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
-        this.controller = new interSection(target, config);
-        return;
-      }
+  /**
+   * 画面に入ったら ATTR_INVIEW のdata属性に true を入れる。
+   * オブザーバーから監視解除される。
+   * @param {*} target
+   */
+   _observerCallback(entries, object) {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
 
-      // 対応していなければ scroll イベントを使う
-      this.controller = new onScroll(target, config);
-    }
-
-    /**
-     * スクロール検知処理を開始
-     * @public
-     */
-    start() {
-      this.controller.start();
-    }
-
-    /**
-     * ビューポート判定を全て停める
-     * @public
-     */
-    stop() {
-      this.controller.stop();
-    }
-
+      object.unobserve(entry.target);
+      entry.target.setAttribute(ATTR_INVIEW, 'true');
+    });
+  }
 }
 
 
