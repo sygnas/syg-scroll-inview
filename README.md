@@ -10,9 +10,9 @@ Scroll in viewport add data attribute.
 ## Release
 
 - 2021.04.21
-  - `data-inview-margin`属性、`data-inview-threshold`属性を廃止。
-  - 余計な機能をすべて廃止し、`data-inview` 属性を `true` にするだけにした。
   - IE11非対応にし、InterscrtionObserver方式のみ対応。
+  - `data-inview-margin`属性を廃止。
+  - 個別に InterscrtionObserver のオプションを指定できるように `data-inview-rootMargin`、`data-inview-root`属性を追加
 - 2020.05.02
   - `data-inview-margin`属性、`data-inview-threshold`属性を追加。
 - 2019.11.11
@@ -32,6 +32,7 @@ npm install --save @sygnas/scroll-inview
 
 ```Html
 <div class="js-inview .inview">foo</div>
+<div class="js-inview .inview" data-inview-threshold="1">bar</div>
 ```
 
 ```JavaScript
@@ -63,13 +64,19 @@ in_view.start();
 syg-scroll-inview のインスタンスを作成。
 
 ```javascript
-const in_view = new ScrollInView({options});
+const in_view = new ScrollInView('.js-inview');
 ```
 
-#### Options
+`IntersectionObserver()` のオプションを指定できる。
+https://developer.mozilla.org/ja/docs/Web/API/IntersectionObserver
 
-`IntersectionObserver()` のオプションを参照。
-[https://developer.mozilla.org/ja/docs/Web/API/IntersectionObserver]
+```javascript
+const option = {
+  rootMargin: '-10%'
+};
+const in_view = new ScrollInView('.js-inview', option);
+```
+
 
 ### start()
 
@@ -78,6 +85,22 @@ const in_view = new ScrollInView({options});
 ```javascript
 in_view.start();
 ```
+
+## Attributes
+
+data属性で個別に option を指定できる。
+
+```Html
+<div class="js-inview .inview" data-inview-threshold="1">bar</div>
+```
+
+
+| 属性 | デフォルト | 機能 |
+| --- | --- | --- |
+| data-inview-root | null | IntersectionObserver の root |
+| data-inview-rootMargin | '0px' | IntersectionObserver の rootMargin |
+| data-inview-threshold | 0 | IntersectionObserver の threshold |
+
 
 ## License
 MIT
