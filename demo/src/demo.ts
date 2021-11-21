@@ -1,5 +1,5 @@
 
-import InView from '../../dist/scroll-inview.es';
+import InView from '../../dist/index.es';
 
 const inview = new InView('.target');
 

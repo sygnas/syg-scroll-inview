@@ -1,411 +1,110 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dist_scroll_inview_es__ = __webpack_require__(1);
-
-
-
-var inview = new __WEBPACK_IMPORTED_MODULE_0__dist_scroll_inview_es__["a" /* default */]('.target');
-
-inview.start();
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__sygnas_throttle__ = __webpack_require__(2);
-
-
-var classCallCheck = function classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-};
-
-var createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || false;
-            descriptor.configurable = true;
-            if ("value" in descriptor) descriptor.writable = true;
-            Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
-
-    return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);
-        if (staticProps) defineProperties(Constructor, staticProps);
-        return Constructor;
-    };
-}();
-
-/**
- * Scroll in viewport add data attribute
- * スクロールしてビューポートに入ったらdata属性を与える
- *
- * @author   Hiroshi Fukuda <info.sygnas@gmail.com>
- * @license  MIT
- */
-
-// デフォルト値
-var defaults = {
-    offset: 50,
-    doc_bottom_offset: 50,
-    on_view: function on_view() {}
-};
-
-var ATTR_INVIEW = 'data-inview';
-var ATTR_INVIEW_OFFSET = 'data-inview-offset';
-
-/**
- * エレメント情報を格納したクラス
- */
-
-var TargetClass = function TargetClass(elm) {
-    classCallCheck(this, TargetClass);
-
-    // ビューポートに入ったかチェックするエレメント
-    this.elm = elm;
-    // ビューポートの判定オフセット
-    this.offset = 0;
-    // ドキュメント内の座標
-    this.top = 0;
-    // ドキュメント内の座標＋エレメント高さ
-    this.bottom = 0;
-    // 表示したか
-    this.is_inview = false;
-};
-
-/**
- * in view controller
- */
-
-var _class = function () {
+(function () {
+    'use strict';
 
     /**
-     * コンストラクタ
-     * @param {string} target DOM selector string
-     * @param {object} config
+     * Scroll in viewport add data attribute
+     * スクロールしてビューポートに入ったらdata属性を与える
+     *
+     * @author   Hiroshi Fukuda <info.sygnas@gmail.com>
+     * @license  MIT
      */
-    function _class(target, config) {
-        classCallCheck(this, _class);
-
-        this.opt = Object.assign(defaults, config);
-        // 対象エレメントのセレクタ文字列
-        this.target_string = target;
-        // 対象エレメントと、座標を格納したリスト
-        this.target_list = [];
-        // 開始したか
-        this.is_started = false;
-        // ウィンドウの高さ
-        this.win_height = 0;
-        // ドキュメント全体の高さ
-        this.doc_height = 0;
-        // 対象エレメントの高さをチェックするための setInterval ID
-        this.interval_id = null;
-        // スクロールイベント
-        this.ev_scroll = null;
-        // リサイズイベント
-        this.ev_resize = null;
-
-        // ターゲットエレメントを取得
-        this.reset_target();
-    }
-
-    /**
-     * エレメント、top座標、bottom座標を格納したクラスの配列を作り直す
-     * @public
-     */
-
-    createClass(_class, [{
-        key: 'reset_target',
-        value: function reset_target() {
-            var _this = this;
-
-            var opt = this.opt;
-            this.target_list = [];
-
-            var node_list = document.querySelectorAll(this.target_string);
-
-            get_node_array(node_list).forEach(function (elm) {
-                var target = new TargetClass(elm);
-                var offset = Number.parseInt(elm.getAttribute(ATTR_INVIEW_OFFSET), 10);
-                target.offset = offset || opt.offset;
-                _this.target_list.push(target);
-            });
-        }
-
-        /**
-         * スクロール検知処理を開始
-         * @public
-         */
-
-    }, {
-        key: 'start',
-        value: function start() {
-
-            // すでに開始していたら無視
-            if (this.is_started) return;
-
-            // 各アイテムの高さをチェック
-            this.$_check_element_position();
-
-            // ウィンドウ、ドキュメントの高さをチェック
-            this.ev_resize = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__sygnas_throttle__["a" /* default */])(50, this.$_check_document_height, this);
-            window.addEventListener('resize', this.ev_resize);
-            this.$_check_document_height();
-
-            // スクロールイベント
-            this.ev_scroll = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__sygnas_throttle__["a" /* default */])(40, this.$_check_inview, this);
-            window.addEventListener('scroll', this.ev_scroll);
-            this.$_check_inview();
-
-            this.is_started = true;
-        }
-
-        /**
-         * ビューポート判定を全て停める
-         * @public
-         */
-
-    }, {
-        key: 'stop',
-        value: function stop() {
-            window.removeEventListener('scroll', this.ev_scroll);
-            window.removeEventListener('resize', this.ev_resize);
-            this.is_started = false;
-        }
-
-        /**
-         * プライベートメソッド
-         */
-
-        /**
-         * 対象エレメントの上下座標をチェックして、this.target_list のオブジェクトを更新
-         */
-
-    }, {
-        key: '$_check_element_position',
-        value: function $_check_element_position() {
-            this.target_list.forEach(function (target) {
-                var elm = target.elm;
-                var scroll_top = window.pageYOffset;
-                var rect = elm.getBoundingClientRect();
-                target.top = scroll_top + rect.top;
-                target.bottom = scroll_top + rect.bottom;
-            });
-        }
-
-        /**
-        * ウィンドウをリサイズしたら高さなどをチェック
-        */
-
-    }, {
-        key: '$_check_document_height',
-        value: function $_check_document_height() {
-            this.win_height = window.window.innerHeight;
-            this.doc_height = document.documentElement.scrollHeight;
-        }
-
-        /**
-         * スクロール処理
-         * 各エレメントが画面内に存在するか
-         */
-
-    }, {
-        key: '$_check_inview',
-        value: function $_check_inview() {
-            var _this2 = this;
-
-            var is_all_inview = true;
-
-            // スクロール上位置と下位置
-            var scroll_top = window.pageYOffset;
-            var scroll_bottom = scroll_top + this.win_height;
-
-            // 場面下端までいったら強制的に全部表示して、scroll処理を止める
-            if (this.$_check_arrived_document_bottom(scroll_bottom)) {
-                return;
-            }
-
-            // 対象エレメントを順にチェック
-            // 全てのエレメントが表示されたら is_all_inview が true になる
-            this.target_list.forEach(function (target) {
-                is_all_inview = _this2.$_check_inview_target(target, scroll_top, scroll_bottom) && is_all_inview;
-            });
-
-            // 全てのエレメントが表示されたら処理を止める
-            if (is_all_inview) this.stop();
-        }
-
-        /**
-         * ドキュメント下端までスクロールしたら、強制的に全表示。
-         * スクロール検知も止める
-         * @param {Number} scroll_bottom 画面の下端座標
-         * @return {Boolean} 画面下端までスクロールしたら ture を返す
-         */
-
-    }, {
-        key: '$_check_arrived_document_bottom',
-        value: function $_check_arrived_document_bottom(scroll_bottom) {
-            var _this3 = this;
-
-            if (scroll_bottom >= this.doc_height - this.opt.doc_bottom_offset) {
-
-                this.target_list.forEach(function (target) {
-                    _this3.$_set_target_visible(target, true);
-                });
-                this.stop();
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * 指定されたターゲットエレメントがビューポートにあるかチェック
-         * @param {Object} target エレメント、上下座標を格納したオブジェクト
-         * @param {Number} scroll_top ウィンドウのスクロール座標上辺
-         * @param {Number} scroll_bottom ウィンドウのスクロール座標下辺
-         * @return {Boolean} ビューポートに入って表示したら true を返す
-         */
-
-    }, {
-        key: '$_check_inview_target',
-        value: function $_check_inview_target(target, scroll_top, scroll_bottom) {
-            // すでにビューポートに入って表示されていたら無視
-            if (target.is_inview) return true;
-
-            // 画面内に入っていたら、通り過ぎていたら data-inview="true" にする
-            if (target.top + target.offset <= scroll_bottom) {
-                this.$_set_target_visible(target, true);
-            }
-
-            return target.is_inview;
-        }
-
-        /**
-         * ターゲットエレメントの表示・非表示切り替え
-         * @param {*} TargetClass ターゲットクラス
-         * @param {*} bool 表示は true / 非表示は false
-         */
-
-    }, {
-        key: '$_set_target_visible',
-        value: function $_set_target_visible(target, bool) {
-            target.elm.setAttribute(ATTR_INVIEW, bool ? 'true' : 'false');
-            target.is_inview = bool;
-        }
-    }]);
-    return _class;
-}();
-
-function get_node_array(node_list) {
-    return Array.prototype.slice.call(node_list, 0);
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (_class);
-//# sourceMappingURL=scroll-inview.es.js.map
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var index = function index(timing, func, scope) {
-    var id = null;
-
-    return function () {
-        if (id !== null) return;
-        func.apply(scope);
-
-        id = setTimeout(function () {
-            id = null;
-        }, timing);
+    var ATTR_INVIEW = 'data-inview';
+    var ATTR_ROOT = 'data-inview-root';
+    var ATTR_MARGIN = 'data-inview-rootMargin';
+    var ATTR_THRESHOLD = 'data-inview-threshold';
+    var DEFAULT = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0
     };
-};
+    /**
+     * in view controller
+     */
 
-/* harmony default export */ __webpack_exports__["a"] = (index);
-//# sourceMappingURL=throttle.es.js.map
+    var default_1 =
+    /** @class */
+    function () {
+      /**
+       * コンストラクタ
+       * ターゲット一覧を精査して、 data-inview-root、data-inview-rootMargin、data-inview-threshold が設定されていないか確認する。
+       * 上記属性毎に observer を作成する。
+       */
+      function default_1(target, option) {
+        var _this = this;
 
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+        if (option === void 0) {
+          option = {};
+        }
 
-module.exports = __webpack_require__(0);
+        this.targetList = {};
+        this.opt = Object.assign(DEFAULT, option);
+        document.querySelectorAll(target).forEach(function (target) {
+          _this.initTargetList(target);
+        });
+      }
+      /**
+       * ターゲットとオプションの管理リストを作成
+       */
 
 
-/***/ })
-/******/ ]);
+      default_1.prototype.initTargetList = function (target) {
+        // 監視対象エレメントに独自指定があればそちらを使う。
+        // 無ければオプション設定を使う
+        var root = target.getAttribute(ATTR_ROOT) || this.opt.root;
+        var rootMargin = target.getAttribute(ATTR_MARGIN) || this.opt.rootMargin;
+        var threshold = Number(target.getAttribute(ATTR_THRESHOLD)) || this.opt.threshold;
+        var key = "".concat(root, "-").concat(rootMargin, "-").concat(threshold);
+
+        if (key in this.targetList === false) {
+          var option = {
+            root: root,
+            rootMargin: rootMargin,
+            threshold: threshold
+          };
+          var observer = new IntersectionObserver(this.observerCallback, option);
+          this.targetList[key] = {
+            list: [],
+            observer: observer
+          };
+        }
+
+        this.targetList[key].list.push(target);
+      };
+      /**
+       * スクロール検知処理を開始
+       */
+
+
+      default_1.prototype.start = function () {
+        var _this = this;
+
+        Object.keys(this.targetList).forEach(function (key) {
+          var targetObj = _this.targetList[key];
+          targetObj.list.forEach(function (target) {
+            targetObj.observer.observe(target);
+          });
+        });
+      };
+      /**
+       * 画面に入ったら ATTR_INVIEW のdata属性に true を入れる。
+       * オブザーバーから監視解除される。
+       */
+
+
+      default_1.prototype.observerCallback = function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          entry.target.setAttribute(ATTR_INVIEW, 'true');
+        });
+      };
+
+      return default_1;
+    }();
+
+    const inview = new default_1('.target');
+
+    inview.start();
+
+})();
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYnVuZGxlLmpzIiwic291cmNlcyI6WyIuLi9kaXN0L2luZGV4LmVzLmpzIiwic3JjL2RlbW8udHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBTY3JvbGwgaW4gdmlld3BvcnQgYWRkIGRhdGEgYXR0cmlidXRlXG4gKiDjgrnjgq/jg63jg7zjg6vjgZfjgabjg5Pjg6Xjg7zjg53jg7zjg4jjgavlhaXjgaPjgZ/jgolkYXRh5bGe5oCn44KS5LiO44GI44KLXG4gKlxuICogQGF1dGhvciAgIEhpcm9zaGkgRnVrdWRhIDxpbmZvLnN5Z25hc0BnbWFpbC5jb20+XG4gKiBAbGljZW5zZSAgTUlUXG4gKi9cbnZhciBBVFRSX0lOVklFVyA9ICdkYXRhLWludmlldyc7XG52YXIgQVRUUl9ST09UID0gJ2RhdGEtaW52aWV3LXJvb3QnO1xudmFyIEFUVFJfTUFSR0lOID0gJ2RhdGEtaW52aWV3LXJvb3RNYXJnaW4nO1xudmFyIEFUVFJfVEhSRVNIT0xEID0gJ2RhdGEtaW52aWV3LXRocmVzaG9sZCc7XG52YXIgREVGQVVMVCA9IHtcbiAgICByb290OiBudWxsLFxuICAgIHJvb3RNYXJnaW46ICcwcHgnLFxuICAgIHRocmVzaG9sZDogMCxcbn07XG4vKipcbiAqIGluIHZpZXcgY29udHJvbGxlclxuICovXG52YXIgZGVmYXVsdF8xID0gLyoqIEBjbGFzcyAqLyAoZnVuY3Rpb24gKCkge1xuICAgIC8qKlxuICAgICAqIOOCs+ODs+OCueODiOODqeOCr+OCv1xuICAgICAqIOOCv+ODvOOCsuODg+ODiOS4gOimp+OCkueyvuafu+OBl+OBpuOAgSBkYXRhLWludmlldy1yb29044CBZGF0YS1pbnZpZXctcm9vdE1hcmdpbuOAgWRhdGEtaW52aWV3LXRocmVzaG9sZCDjgYzoqK3lrprjgZXjgozjgabjgYTjgarjgYTjgYvnorroqo3jgZnjgovjgIJcbiAgICAgKiDkuIroqJjlsZ7mgKfmr47jgasgb2JzZXJ2ZXIg44KS5L2c5oiQ44GZ44KL44CCXG4gICAgICovXG4gICAgZnVuY3Rpb24gZGVmYXVsdF8xKHRhcmdldCwgb3B0aW9uKSB7XG4gICAgICAgIHZhciBfdGhpcyA9IHRoaXM7XG4gICAgICAgIGlmIChvcHRpb24gPT09IHZvaWQgMCkgeyBvcHRpb24gPSB7fTsgfVxuICAgICAgICB0aGlzLnRhcmdldExpc3QgPSB7fTtcbiAgICAgICAgdGhpcy5vcHQgPSBPYmplY3QuYXNzaWduKERFRkFVTFQsIG9wdGlvbik7XG4gICAgICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwodGFyZ2V0KS5mb3JFYWNoKGZ1bmN0aW9uICh0YXJnZXQpIHtcbiAgICAgICAgICAgIF90aGlzLmluaXRUYXJnZXRMaXN0KHRhcmdldCk7XG4gICAgICAgIH0pO1xuICAgIH1cbiAgICAvKipcbiAgICAgKiDjgr/jg7zjgrLjg4Pjg4jjgajjgqrjg5fjgrfjg6fjg7Pjga7nrqHnkIbjg6rjgrnjg4jjgpLkvZzmiJBcbiAgICAgKi9cbiAgICBkZWZhdWx0XzEucHJvdG90eXBlLmluaXRUYXJnZXRMaXN0ID0gZnVuY3Rpb24gKHRhcmdldCkge1xuICAgICAgICAvLyDnm6Poppblr77osaHjgqjjg6zjg6Hjg7Pjg4jjgavni6zoh6rmjIflrprjgYzjgYLjgozjgbDjgZ3jgaHjgonjgpLkvb/jgYbjgIJcbiAgICAgICAgLy8g54Sh44GR44KM44Gw44Kq44OX44K344On44Oz6Kit5a6a44KS5L2/44GGXG4gICAgICAgIHZhciByb290ID0gdGFyZ2V0LmdldEF0dHJpYnV0ZShBVFRSX1JPT1QpIHx8IHRoaXMub3B0LnJvb3Q7XG4gICAgICAgIHZhciByb290TWFyZ2luID0gdGFyZ2V0LmdldEF0dHJpYnV0ZShBVFRSX01BUkdJTikgfHwgdGhpcy5vcHQucm9vdE1hcmdpbjtcbiAgICAgICAgdmFyIHRocmVzaG9sZCA9IE51bWJlcih0YXJnZXQuZ2V0QXR0cmlidXRlKEFUVFJfVEhSRVNIT0xEKSkgfHwgdGhpcy5vcHQudGhyZXNob2xkO1xuICAgICAgICB2YXIga2V5ID0gXCJcIi5jb25jYXQocm9vdCwgXCItXCIpLmNvbmNhdChyb290TWFyZ2luLCBcIi1cIikuY29uY2F0KHRocmVzaG9sZCk7XG4gICAgICAgIGlmIChrZXkgaW4gdGhpcy50YXJnZXRMaXN0ID09PSBmYWxzZSkge1xuICAgICAgICAgICAgdmFyIG9wdGlvbiA9IHtcbiAgICAgICAgICAgICAgICByb290OiByb290LFxuICAgICAgICAgICAgICAgIHJvb3RNYXJnaW46IHJvb3RNYXJnaW4sXG4gICAgICAgICAgICAgICAgdGhyZXNob2xkOiB0aHJlc2hvbGQsXG4gICAgICAgICAgICB9O1xuICAgICAgICAgICAgdmFyIG9ic2VydmVyID0gbmV3IEludGVyc2VjdGlvbk9ic2VydmVyKHRoaXMub2JzZXJ2ZXJDYWxsYmFjaywgb3B0aW9uKTtcbiAgICAgICAgICAgIHRoaXMudGFyZ2V0TGlzdFtrZXldID0ge1xuICAgICAgICAgICAgICAgIGxpc3Q6IFtdLFxuICAgICAgICAgICAgICAgIG9ic2VydmVyOiBvYnNlcnZlclxuICAgICAgICAgICAgfTtcbiAgICAgICAgfVxuICAgICAgICB0aGlzLnRhcmdldExpc3Rba2V5XS5saXN0LnB1c2godGFyZ2V0KTtcbiAgICB9O1xuICAgIC8qKlxuICAgICAqIOOCueOCr+ODreODvOODq+aknOefpeWHpueQhuOCkumWi+Wni1xuICAgICAqL1xuICAgIGRlZmF1bHRfMS5wcm90b3R5cGUuc3RhcnQgPSBmdW5jdGlvbiAoKSB7XG4gICAgICAgIHZhciBfdGhpcyA9IHRoaXM7XG4gICAgICAgIE9iamVjdC5rZXlzKHRoaXMudGFyZ2V0TGlzdCkuZm9yRWFjaChmdW5jdGlvbiAoa2V5KSB7XG4gICAgICAgICAgICB2YXIgdGFyZ2V0T2JqID0gX3RoaXMudGFyZ2V0TGlzdFtrZXldO1xuICAgICAgICAgICAgdGFyZ2V0T2JqLmxpc3QuZm9yRWFjaChmdW5jdGlvbiAodGFyZ2V0KSB7XG4gICAgICAgICAgICAgICAgdGFyZ2V0T2JqLm9ic2VydmVyLm9ic2VydmUodGFyZ2V0KTtcbiAgICAgICAgICAgIH0pO1xuICAgICAgICB9KTtcbiAgICB9O1xuICAgIC8qKlxuICAgICAqIOeUu+mdouOBq+WFpeOBo+OBn+OCiSBBVFRSX0lOVklFVyDjga5kYXRh5bGe5oCn44GrIHRydWUg44KS5YWl44KM44KL44CCXG4gICAgICog44Kq44OW44K244O844OQ44O844GL44KJ55uj6KaW6Kej6Zmk44GV44KM44KL44CCXG4gICAgICovXG4gICAgZGVmYXVsdF8xLnByb3RvdHlwZS5vYnNlcnZlckNhbGxiYWNrID0gZnVuY3Rpb24gKGVudHJpZXMsIG9ic2VydmVyKSB7XG4gICAgICAgIGVudHJpZXMuZm9yRWFjaChmdW5jdGlvbiAoZW50cnkpIHtcbiAgICAgICAgICAgIGlmICghZW50cnkuaXNJbnRlcnNlY3RpbmcpXG4gICAgICAgICAgICAgICAgcmV0dXJuO1xuICAgICAgICAgICAgb2JzZXJ2ZXIudW5vYnNlcnZlKGVudHJ5LnRhcmdldCk7XG4gICAgICAgICAgICBlbnRyeS50YXJnZXQuc2V0QXR0cmlidXRlKEFUVFJfSU5WSUVXLCAndHJ1ZScpO1xuICAgICAgICB9KTtcbiAgICB9O1xuICAgIHJldHVybiBkZWZhdWx0XzE7XG59KCkpO1xuXG5leHBvcnQgeyBkZWZhdWx0XzEgYXMgZGVmYXVsdCB9O1xuIiwiXG5pbXBvcnQgSW5WaWV3IGZyb20gJy4uLy4uL2Rpc3QvaW5kZXguZXMnO1xuXG5jb25zdCBpbnZpZXcgPSBuZXcgSW5WaWV3KCcudGFyZ2V0Jyk7XG5cbmludmlldy5zdGFydCgpO1xuXG5cbiJdLCJuYW1lcyI6WyJBVFRSX0lOVklFVyIsIkFUVFJfUk9PVCIsIkFUVFJfTUFSR0lOIiwiQVRUUl9USFJFU0hPTEQiLCJERUZBVUxUIiwicm9vdCIsInJvb3RNYXJnaW4iLCJ0aHJlc2hvbGQiLCJkZWZhdWx0XzEiLCJ0YXJnZXQiLCJvcHRpb24iLCJfdGhpcyIsInRhcmdldExpc3QiLCJvcHQiLCJPYmplY3QiLCJhc3NpZ24iLCJkb2N1bWVudCIsInF1ZXJ5U2VsZWN0b3JBbGwiLCJmb3JFYWNoIiwiaW5pdFRhcmdldExpc3QiLCJwcm90b3R5cGUiLCJnZXRBdHRyaWJ1dGUiLCJOdW1iZXIiLCJrZXkiLCJjb25jYXQiLCJvYnNlcnZlciIsIkludGVyc2VjdGlvbk9ic2VydmVyIiwib2JzZXJ2ZXJDYWxsYmFjayIsImxpc3QiLCJwdXNoIiwic3RhcnQiLCJrZXlzIiwidGFyZ2V0T2JqIiwib2JzZXJ2ZSIsImVudHJpZXMiLCJlbnRyeSIsImlzSW50ZXJzZWN0aW5nIiwidW5vYnNlcnZlIiwic2V0QXR0cmlidXRlIiwiSW5WaWV3Il0sIm1hcHBpbmdzIjoiOzs7SUFBQTtJQUNBO0lBQ0E7SUFDQTtJQUNBO0lBQ0E7SUFDQTtJQUNBLElBQUlBLFdBQVcsR0FBRyxhQUFsQjtJQUNBLElBQUlDLFNBQVMsR0FBRyxrQkFBaEI7SUFDQSxJQUFJQyxXQUFXLEdBQUcsd0JBQWxCO0lBQ0EsSUFBSUMsY0FBYyxHQUFHLHVCQUFyQjtJQUNBLElBQUlDLE9BQU8sR0FBRztJQUNWQyxFQUFBQSxJQUFJLEVBQUUsSUFESTtJQUVWQyxFQUFBQSxVQUFVLEVBQUUsS0FGRjtJQUdWQyxFQUFBQSxTQUFTLEVBQUU7SUFIRCxDQUFkO0lBS0E7SUFDQTtJQUNBOztJQUNBLElBQUlDLFNBQVM7SUFBRztJQUFlLFlBQVk7SUFDdkM7SUFDSjtJQUNBO0lBQ0E7SUFDQTtJQUNJLFdBQVNBLFNBQVQsQ0FBbUJDLE1BQW5CLEVBQTJCQyxNQUEzQixFQUFtQztJQUMvQixRQUFJQyxLQUFLLEdBQUcsSUFBWjs7SUFDQSxRQUFJRCxNQUFNLEtBQUssS0FBSyxDQUFwQixFQUF1QjtJQUFFQSxNQUFBQSxNQUFNLEdBQUcsRUFBVDtJQUFjOztJQUN2QyxTQUFLRSxVQUFMLEdBQWtCLEVBQWxCO0lBQ0EsU0FBS0MsR0FBTCxHQUFXQyxNQUFNLENBQUNDLE1BQVAsQ0FBY1gsT0FBZCxFQUF1Qk0sTUFBdkIsQ0FBWDtJQUNBTSxJQUFBQSxRQUFRLENBQUNDLGdCQUFULENBQTBCUixNQUExQixFQUFrQ1MsT0FBbEMsQ0FBMEMsVUFBVVQsTUFBVixFQUFrQjtJQUN4REUsTUFBQUEsS0FBSyxDQUFDUSxjQUFOLENBQXFCVixNQUFyQjtJQUNILEtBRkQ7SUFHSDtJQUNEO0lBQ0o7SUFDQTs7O0lBQ0lELEVBQUFBLFNBQVMsQ0FBQ1ksU0FBVixDQUFvQkQsY0FBcEIsR0FBcUMsVUFBVVYsTUFBVixFQUFrQjtJQUNuRDtJQUNBO0lBQ0EsUUFBSUosSUFBSSxHQUFHSSxNQUFNLENBQUNZLFlBQVAsQ0FBb0JwQixTQUFwQixLQUFrQyxLQUFLWSxHQUFMLENBQVNSLElBQXREO0lBQ0EsUUFBSUMsVUFBVSxHQUFHRyxNQUFNLENBQUNZLFlBQVAsQ0FBb0JuQixXQUFwQixLQUFvQyxLQUFLVyxHQUFMLENBQVNQLFVBQTlEO0lBQ0EsUUFBSUMsU0FBUyxHQUFHZSxNQUFNLENBQUNiLE1BQU0sQ0FBQ1ksWUFBUCxDQUFvQmxCLGNBQXBCLENBQUQsQ0FBTixJQUErQyxLQUFLVSxHQUFMLENBQVNOLFNBQXhFO0lBQ0EsUUFBSWdCLEdBQUcsR0FBRyxHQUFHQyxNQUFILENBQVVuQixJQUFWLEVBQWdCLEdBQWhCLEVBQXFCbUIsTUFBckIsQ0FBNEJsQixVQUE1QixFQUF3QyxHQUF4QyxFQUE2Q2tCLE1BQTdDLENBQW9EakIsU0FBcEQsQ0FBVjs7SUFDQSxRQUFJZ0IsR0FBRyxJQUFJLEtBQUtYLFVBQVosS0FBMkIsS0FBL0IsRUFBc0M7SUFDbEMsVUFBSUYsTUFBTSxHQUFHO0lBQ1RMLFFBQUFBLElBQUksRUFBRUEsSUFERztJQUVUQyxRQUFBQSxVQUFVLEVBQUVBLFVBRkg7SUFHVEMsUUFBQUEsU0FBUyxFQUFFQTtJQUhGLE9BQWI7SUFLQSxVQUFJa0IsUUFBUSxHQUFHLElBQUlDLG9CQUFKLENBQXlCLEtBQUtDLGdCQUE5QixFQUFnRGpCLE1BQWhELENBQWY7SUFDQSxXQUFLRSxVQUFMLENBQWdCVyxHQUFoQixJQUF1QjtJQUNuQkssUUFBQUEsSUFBSSxFQUFFLEVBRGE7SUFFbkJILFFBQUFBLFFBQVEsRUFBRUE7SUFGUyxPQUF2QjtJQUlIOztJQUNELFNBQUtiLFVBQUwsQ0FBZ0JXLEdBQWhCLEVBQXFCSyxJQUFyQixDQUEwQkMsSUFBMUIsQ0FBK0JwQixNQUEvQjtJQUNILEdBcEJEO0lBcUJBO0lBQ0o7SUFDQTs7O0lBQ0lELEVBQUFBLFNBQVMsQ0FBQ1ksU0FBVixDQUFvQlUsS0FBcEIsR0FBNEIsWUFBWTtJQUNwQyxRQUFJbkIsS0FBSyxHQUFHLElBQVo7O0lBQ0FHLElBQUFBLE1BQU0sQ0FBQ2lCLElBQVAsQ0FBWSxLQUFLbkIsVUFBakIsRUFBNkJNLE9BQTdCLENBQXFDLFVBQVVLLEdBQVYsRUFBZTtJQUNoRCxVQUFJUyxTQUFTLEdBQUdyQixLQUFLLENBQUNDLFVBQU4sQ0FBaUJXLEdBQWpCLENBQWhCO0lBQ0FTLE1BQUFBLFNBQVMsQ0FBQ0osSUFBVixDQUFlVixPQUFmLENBQXVCLFVBQVVULE1BQVYsRUFBa0I7SUFDckN1QixRQUFBQSxTQUFTLENBQUNQLFFBQVYsQ0FBbUJRLE9BQW5CLENBQTJCeEIsTUFBM0I7SUFDSCxPQUZEO0lBR0gsS0FMRDtJQU1ILEdBUkQ7SUFTQTtJQUNKO0lBQ0E7SUFDQTs7O0lBQ0lELEVBQUFBLFNBQVMsQ0FBQ1ksU0FBVixDQUFvQk8sZ0JBQXBCLEdBQXVDLFVBQVVPLE9BQVYsRUFBbUJULFFBQW5CLEVBQTZCO0lBQ2hFUyxJQUFBQSxPQUFPLENBQUNoQixPQUFSLENBQWdCLFVBQVVpQixLQUFWLEVBQWlCO0lBQzdCLFVBQUksQ0FBQ0EsS0FBSyxDQUFDQyxjQUFYLEVBQ0k7SUFDSlgsTUFBQUEsUUFBUSxDQUFDWSxTQUFULENBQW1CRixLQUFLLENBQUMxQixNQUF6QjtJQUNBMEIsTUFBQUEsS0FBSyxDQUFDMUIsTUFBTixDQUFhNkIsWUFBYixDQUEwQnRDLFdBQTFCLEVBQXVDLE1BQXZDO0lBQ0gsS0FMRDtJQU1ILEdBUEQ7O0lBUUEsU0FBT1EsU0FBUDtJQUNILENBaEU4QixFQUEvQjs7SUNoQkEsTUFBTSxNQUFNLEdBQUcsSUFBSStCLFNBQU0sQ0FBQyxTQUFTLENBQUMsQ0FBQztBQUNyQztJQUNBLE1BQU0sQ0FBQyxLQUFLLEVBQUU7Ozs7OzsifQ==

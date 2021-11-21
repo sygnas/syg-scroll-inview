@@ -6,12 +6,15 @@
  * @license  MIT
  */
 
-const ATTR_INVIEW = 'data-inview';
-const ATTR_ROOT = 'data-inview-root';
-const ATTR_MARGIN = 'data-inview-rootMargin';
-const ATTR_THRESHOLD = 'data-inview-threshold';
 
-const DEFAULT = {
+import { TTargetItem, TTargetList } from "./types";
+
+const ATTR_INVIEW: string = 'data-inview';
+const ATTR_ROOT: string = 'data-inview-root';
+const ATTR_MARGIN: string = 'data-inview-rootMargin';
+const ATTR_THRESHOLD: string = 'data-inview-threshold';
+
+const DEFAULT: IntersectionObserverInit = {
   root: null,
   rootMargin: '0px',
   threshold: 0,
@@ -22,18 +25,19 @@ const DEFAULT = {
  */
 export default class {
 
+  private targetList: TTargetList;
+  private opt: IntersectionObserverInit;
+
   /**
    * コンストラクタ
    * ターゲット一覧を精査して、 data-inview-root、data-inview-rootMargin、data-inview-threshold が設定されていないか確認する。
    * 上記属性毎に observer を作成する。
-   * @param {string} targetString DOM selector string
-   * @param {object} option IntersectionObserver Option
    */
-  constructor(targetString, option = {}) {
+  constructor(target: string, option: IntersectionObserverInit = {}) {
     this.targetList = {};
-    this.option = Object.assign(DEFAULT, option);
+    this.opt = Object.assign(DEFAULT, option);
 
-    document.querySelectorAll(targetString).forEach((target)=>{
+    document.querySelectorAll<HTMLElement>(target).forEach((target: HTMLElement)=>{
       this.initTargetList(target);
     });
   }
@@ -41,34 +45,34 @@ export default class {
   /**
    * ターゲットとオプションの管理リストを作成
    */
-  initTargetList(target) {
-    const root = target.getAttribute(ATTR_ROOT) || this.option.root;
-    const rootMargin = target.getAttribute(ATTR_MARGIN) || this.option.rootMargin;
-    const threshold = target.getAttribute(ATTR_THRESHOLD) || this.option.threshold;
-    const key = `${root}-${rootMargin}-${threshold}`;
+  private initTargetList(target: HTMLElement): void {
+    // 監視対象エレメントに独自指定があればそちらを使う。
+    // 無ければオプション設定を使う
+    const root = target.getAttribute(ATTR_ROOT) || this.opt.root;
+    const rootMargin: string = target.getAttribute(ATTR_MARGIN) || this.opt.rootMargin as string;
+    const threshold: number = Number(target.getAttribute(ATTR_THRESHOLD)) || this.opt.threshold as number;
+    const key: string = `${root}-${rootMargin}-${threshold}`;
 
     if (key in this.targetList === false){
-      const option = {
-        root: root,
+      const option: IntersectionObserverInit = {
+        root: root as HTMLElement,
         rootMargin: rootMargin,
         threshold: threshold,
       };
-      const observer = new IntersectionObserver(this._observerCallback, option);
+      const observer: IntersectionObserver = new IntersectionObserver(this.observerCallback, option);
 
       this.targetList[key] = {
         list: [],
         observer
       };
     }
-
     this.targetList[key].list.push(target);
   }
 
   /**
    * スクロール検知処理を開始
-   * @public
    */
-  start() {
+   public start(): void {
     Object.keys(this.targetList).forEach(key => {
       const targetObj = this.targetList[key];
 
@@ -81,13 +85,12 @@ export default class {
   /**
    * 画面に入ったら ATTR_INVIEW のdata属性に true を入れる。
    * オブザーバーから監視解除される。
-   * @param {*} target
    */
-   _observerCallback(entries, object) {
+   private observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
     entries.forEach(entry => {
       if(!entry.isIntersecting) return;
 
-      object.unobserve(entry.target);
+      observer.unobserve(entry.target);
       entry.target.setAttribute(ATTR_INVIEW, 'true');
     });
   }
