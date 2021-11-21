@@ -1,6 +1,6 @@
 {
   "name": "@sygnas/scroll-inview",
-  "version": "3.1.0",
+  "version": "3.2.1",
   "description": "Scroll in viewport add data attribute.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
