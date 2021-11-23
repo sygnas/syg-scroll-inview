@@ -2,9 +2,8 @@
   "name": "@sygnas/scroll-inview",
   "version": "3.2.1",
   "description": "Scroll in viewport add data attribute.",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "types": "types/index.d.ts",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/es6/index.js",
   "browser": "dist/scroll-inview.js",
   "moduleName": "sygScrollInview",
   "private": false,
@@ -16,9 +15,7 @@
     "start": "npm run watch",
     "watch": "rollup -w -c rollup.config.js",
     "build": "rm -rf dist && rollup -c rollup.config.js",
-    "types": "rm -rf types && tsc -d --outDir types --noEmit false --emitDeclarationOnly true",
     "demo": "rollup -c rollup.demo.config.js",
-    "production": "npm run build && npm run types",
     "lint": "eslint src"
   },
   "keywords": [

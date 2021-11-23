@@ -1,5 +1,5 @@
 
-import InView from '../../dist/index.es';
+import InView from '../../dist/es6/index';
 
 const inview = new InView('.target');
 

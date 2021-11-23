@@ -29,7 +29,7 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "@/*":["src/*"]
+      "@/*":["demo/src/*"]
     },
     // "rootDirs": [],
     // "typeRoots": [],
@@ -68,7 +68,7 @@
     // "declarationDir": "./types",
 
     /* Interop Constraints */
-    "isolatedModules": true,
+    // "isolatedModules": true,
     // "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     // "preserveSymlinks": true,
@@ -99,6 +99,6 @@
     // "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["demo/src/**/*.ts"],
   "exclude": ["node_modules"]
 }
