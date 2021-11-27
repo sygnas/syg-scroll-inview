@@ -9,7 +9,9 @@ Scroll in viewport add data attribute.
 
 ## Release
 
-- 2021.04.21
+- 2021.11.27
+  - ブラウザ用は削除
+- 2021.14.21
   - IE11非対応にし、InterscrtionObserver方式のみ対応。
   - `data-inview-margin`属性を廃止。
   - 個別に InterscrtionObserver のオプションを指定できるように `data-inview-rootMargin`、`data-inview-root`属性を追加

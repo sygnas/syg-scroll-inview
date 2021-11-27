@@ -1,11 +1,11 @@
 // https://zenn.dev/yuki0410/articles/74f80c4243919ea2a247-2
 // https://qiita.com/knjname/items/0c521a81ff2695a94368
 
-import pluginNodeResolve from '@rollup/plugin-node-resolve';
-import pluginCommonjs from '@rollup/plugin-commonjs';
+// import pluginNodeResolve from '@rollup/plugin-node-resolve';
+// import pluginCommonjs from '@rollup/plugin-commonjs';
 import pluginTypescript from '@rollup/plugin-typescript';
 import { babel as pluginBabel } from '@rollup/plugin-babel';
-import { terser as pluginTerser } from 'rollup-plugin-terser';
+// import { terser as pluginTerser } from 'rollup-plugin-terser';
 import * as path from 'path';
 import pkg from './package.json';
 
@@ -23,46 +23,46 @@ const extensions = ['.ts', '.tsx', '.js', '.jsx'];
 
 
 // ブラウザ用設定
-const configureBrorser = {
-  input: 'src/index.ts',
-  output: [
-    // minifyしないで出力
-    {
-      name: pkg.moduleName,
-      file: pkg.browser,
-      format: 'iife',
-      sourcemap: true,
-    },
-    // minifyして出力
-    {
-      name: pkg.moduleName,
-      file: pkg.browser.replace('.js', '.min.js'),
-      format: 'iife',
-      sourcemap: true,
-      plugins: [
-        // minify用プラグイン
-        pluginTerser(),
-      ],
-    }
-  ],
-  plugins: [
-    pluginTypescript({
-      sourceMap: true,
-      inlineSources: true,
-    }),
-    pluginCommonjs({
-      extensions: [".js", ".ts"],
-    }),
-    pluginBabel({
-      extensions,
-      babelHelpers: "bundled",
-      configFile: path.resolve(__dirname, ".babelrc.js"),
-    }),
-    pluginNodeResolve({
-      browser: true,
-    }),
-  ],
-};
+// const configureBrorser = {
+//   input: 'src/index.ts',
+//   output: [
+//     // minifyしないで出力
+//     {
+//       name: pkg.moduleName,
+//       file: pkg.browser,
+//       format: 'iife',
+//       sourcemap: true,
+//     },
+//     // minifyして出力
+//     {
+//       name: pkg.moduleName,
+//       file: pkg.browser.replace('.js', '.min.js'),
+//       format: 'iife',
+//       sourcemap: true,
+//       plugins: [
+//         // minify用プラグイン
+//         pluginTerser(),
+//       ],
+//     }
+//   ],
+//   plugins: [
+//     pluginTypescript({
+//       sourceMap: true,
+//       inlineSources: true,
+//     }),
+//     pluginCommonjs({
+//       extensions: [".js", ".ts"],
+//     }),
+//     pluginBabel({
+//       extensions,
+//       babelHelpers: "bundled",
+//       configFile: path.resolve(__dirname, ".babelrc.js"),
+//     }),
+//     pluginNodeResolve({
+//       browser: true,
+//     }),
+//   ],
+// };
 
 
 // ESモジュール用設定
@@ -131,7 +131,7 @@ const configureCommonJS = {
 
 
 export default [
-  configureBrorser,
+  // configureBrorser,
   configureESModule,
   configureCommonJS,
 ];
