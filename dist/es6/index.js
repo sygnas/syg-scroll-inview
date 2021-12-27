@@ -33,12 +33,15 @@ var _default = /*#__PURE__*/function () {
 
     _classCallCheck(this, _default);
 
+    _defineProperty(this, "onInviewFunc", undefined);
+
     _defineProperty(this, "targetList", void 0);
 
     _defineProperty(this, "opt", void 0);
 
     this.targetList = {};
     this.opt = Object.assign(DEFAULT, option);
+    this.onInviewFunc = undefined;
     document.querySelectorAll(target).forEach(function (target) {
       _this.initTargetList(target);
     });
@@ -64,7 +67,7 @@ var _default = /*#__PURE__*/function () {
           rootMargin: rootMargin,
           threshold: threshold
         };
-        var observer = new IntersectionObserver(this.observerCallback, option);
+        var observer = new IntersectionObserver(this.observerCallback.bind(this), option);
         this.targetList[key] = {
           list: [],
           observer: observer
@@ -97,8 +100,15 @@ var _default = /*#__PURE__*/function () {
   }, {
     key: "observerCallback",
     value: function observerCallback(entries, observer) {
+      var _this3 = this;
+
       entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
+        if (!entry.isIntersecting) return; // inviewした時に実行する外部関数
+
+        if (_this3.onInviewFunc) {
+          _this3.onInviewFunc(entry.target);
+        }
+
         observer.unobserve(entry.target);
         entry.target.setAttribute(ATTR_INVIEW, 'true');
       });

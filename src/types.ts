@@ -8,4 +8,6 @@ type TTargetList = {
   [key: string]: TTargetItem
 };
 
-export type {TTargetItem, TTargetList}
+type TOnInviewFunc = (elm:IntersectionObserverEntry['target']) => void;
+
+export type {TTargetItem, TTargetList, TOnInviewFunc}

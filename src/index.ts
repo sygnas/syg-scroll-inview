@@ -7,7 +7,7 @@
  */
 
 
-import { TTargetItem, TTargetList } from "./types";
+import { TTargetItem, TTargetList, TOnInviewFunc } from "./types";
 
 const ATTR_INVIEW: string = 'data-inview';
 const ATTR_ROOT: string = 'data-inview-root';
@@ -25,6 +25,7 @@ const DEFAULT: IntersectionObserverInit = {
  */
 export default class {
 
+  public onInviewFunc: TOnInviewFunc | undefined = undefined;
   private targetList: TTargetList;
   private opt: IntersectionObserverInit;
 
@@ -36,6 +37,7 @@ export default class {
   constructor(target: string, option: IntersectionObserverInit = {}) {
     this.targetList = {};
     this.opt = Object.assign(DEFAULT, option);
+    this.onInviewFunc = undefined;
 
     document.querySelectorAll<HTMLElement>(target).forEach((target: HTMLElement)=>{
       this.initTargetList(target);
@@ -59,7 +61,7 @@ export default class {
         rootMargin: rootMargin,
         threshold: threshold,
       };
-      const observer: IntersectionObserver = new IntersectionObserver(this.observerCallback, option);
+      const observer: IntersectionObserver = new IntersectionObserver(this.observerCallback.bind(this), option);
 
       this.targetList[key] = {
         list: [],
@@ -89,6 +91,11 @@ export default class {
    private observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
     entries.forEach(entry => {
       if(!entry.isIntersecting) return;
+
+      // inviewした時に実行する外部関数
+      if(this.onInviewFunc){
+        this.onInviewFunc(entry.target);
+      }
 
       observer.unobserve(entry.target);
       entry.target.setAttribute(ATTR_INVIEW, 'true');

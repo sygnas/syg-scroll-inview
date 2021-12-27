@@ -5,4 +5,5 @@ declare type TTargetItem = {
 declare type TTargetList = {
     [key: string]: TTargetItem;
 };
-export type { TTargetItem, TTargetList };
+declare type TOnInviewFunc = (elm: IntersectionObserverEntry['target']) => void;
+export type { TTargetItem, TTargetList, TOnInviewFunc };

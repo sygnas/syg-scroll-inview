@@ -5,10 +5,12 @@
  * @author   Hiroshi Fukuda <info.sygnas@gmail.com>
  * @license  MIT
  */
+import { TOnInviewFunc } from "./types";
 /**
  * in view controller
  */
 export default class {
+    onInviewFunc: TOnInviewFunc | undefined;
     private targetList;
     private opt;
     /**
