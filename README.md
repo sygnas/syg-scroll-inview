@@ -9,6 +9,8 @@ Scroll in viewport add data attribute.
 
 ## Release
 
+- 2021.12.28
+  - メンバー `onInviewFunc` を追加
 - 2021.11.27
   - ブラウザ用は削除
 - 2021.14.21
@@ -40,8 +42,13 @@ npm install --save @sygnas/scroll-inview
 ```JavaScript
 import ScrollInView from '@sygnas/scroll-inview';
 
-const in_view = new ScrollInView($('.js-inview'));
-in_view.start();
+const inview = new ScrollInView($('.js-inview'));
+
+inview.onInviewFunc = elm => {
+  console.log('画面に入った', elm);
+}
+
+inview.start();
 ```
 
 ```Sass
@@ -66,7 +73,7 @@ in_view.start();
 syg-scroll-inview のインスタンスを作成。
 
 ```javascript
-const in_view = new ScrollInView('.js-inview');
+const inview = new ScrollInView('.js-inview');
 ```
 
 `IntersectionObserver()` のオプションを指定できる。
@@ -76,7 +83,7 @@ https://developer.mozilla.org/ja/docs/Web/API/IntersectionObserver
 const option = {
   rootMargin: '-10%'
 };
-const in_view = new ScrollInView('.js-inview', option);
+const inview = new ScrollInView('.js-inview', option);
 ```
 
 
@@ -85,7 +92,7 @@ const in_view = new ScrollInView('.js-inview', option);
 スクロールの監視を開始する。
 
 ```javascript
-in_view.start();
+inview.start();
 ```
 
 ## Attributes
@@ -103,6 +110,20 @@ data属性で個別に option を指定できる。
 | data-inview-rootMargin | '0px' | IntersectionObserver の rootMargin |
 | data-inview-threshold | 0 | IntersectionObserver の threshold |
 
+
+## Members
+
+### onInviewFunc
+
+ターゲットエレメントが画面に入った時に呼び出される関数を指定。
+
+```
+const inview = new ScrollInView($('.js-inview'));
+
+inview.onInviewFunc = elm => {
+  console.log('画面に入った', elm);
+}
+```
 
 ## License
 MIT
